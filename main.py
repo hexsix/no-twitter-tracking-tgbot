@@ -24,11 +24,10 @@ def start(update, context):
 
 def help(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text=
-            "The only thing I can do\n"
-            "is getting rid of twitter tracking code tails\n"
+            "The only thing I can do is getting rid of twitter tracking code tails\n"
             "\n"
-            "For example, https://twitter.com/daguguguji/status/114514?t=1919810&s=19 \n"
-            "to https://twitter.com/daguguguji/status/114514 \n"
+            "For example, https://twitter.com/daguguguji/status/114514?t=1919810&s=19 to https://twitter.com/daguguguji/status/114514 \n"
+            "Or, https://twitter.com/daguguguji/status/114514/photo/1 to https://twitter.com/daguguguji/status/114514 \n"
             "\n"
             "If you find any bugs, please stop using and open an issue on \n"
             "https://github.com/hexsix/no-twitter-tracking-tgbot"
@@ -36,7 +35,7 @@ def help(update, context):
 
 
 def replace(text):
-    match = re.search(r"https:\/\/(?:www\.)?twitter\.com\/(\w){1,15}\/status\/(\d)*\?t=(\w)*&s=(\d){1,2}", text)
+    match = re.search(r"https:\/\/(?:www\.)?twitter\.com\/(\w){1,15}\/status\/(\d)*\S*", text)
     if match:
         src = match.group()
         dst = re.search(r"https:\/\/(?:www\.)?twitter\.com\/(\w){1,15}\/status\/(\d)*", src).group()
@@ -46,8 +45,6 @@ def replace(text):
 
 
 def no_twitter_tracking_text(update, context):
-    if not update.channel_post:
-        return
     text = replace(update.channel_post.text)
     if not text:
         return
@@ -57,8 +54,6 @@ def no_twitter_tracking_text(update, context):
 
 
 def no_twitter_tracking_caption(update, context):
-    if not update.channel_post:
-        return
     caption = replace(update.channel_post.caption)
     if not caption:
         return
