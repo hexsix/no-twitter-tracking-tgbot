@@ -47,24 +47,24 @@ def replace(text: str):
 
 
 def no_twitter_tracking_text(update: Update, context: CallbackContext):
-    logger.info(f"recieve {update.message.text}")
-    text = replace(update.message.text)
+    logger.info(f"recieve {update.channel_post.text}")
+    text = replace(update.channel_post.text)
     if not text:
         return
     logger.info(f"edited {text}")
-    context.bot.editMessageText(chat_id=update.message.chat_id,
-                                message_id=update.message.reply_to_message.message_id,
+    context.bot.editMessageText(chat_id=update.channel_post.chat_id,
+                                message_id=update.channel_post.message_id,
                                 text=text)
 
 
 def no_twitter_tracking_caption(update: Update, context: CallbackContext):
-    logger.info(f"recieve {update.message.caption}")
-    caption = replace(update.message.caption)
+    logger.info(f"recieve {update.channel_post.caption}")
+    caption = replace(update.channel_post.caption)
     if not caption:
         return
     logger.info(f"edited {caption}")
-    context.bot.editMessageCaption(chat_id=update.message.chat_id,
-                                   message_id=update.message.reply_to_message.message_id,
+    context.bot.editMessageCaption(chat_id=update.channel_post.chat_id,
+                                   message_id=update.channel_post.message_id,
                                    caption=caption)
 
 
@@ -74,11 +74,12 @@ if __name__ == '__main__':
 
     start_handler = CommandHandler('start', start)
     help_handler = CommandHandler('help', help)
-    no_twitter_tracking_handler = MessageHandler(Filters.text, no_twitter_tracking_text)
-    no_twitter_tracking_handler = MessageHandler(Filters.caption, no_twitter_tracking_caption)
+    no_twitter_tracking_txt_handler = MessageHandler(Filters.text, no_twitter_tracking_text)
+    no_twitter_tracking_caption_handler = MessageHandler(Filters.caption, no_twitter_tracking_caption)
 
     dispatcher.add_handler(start_handler)
     dispatcher.add_handler(help_handler)
-    dispatcher.add_handler(no_twitter_tracking_handler)
+    dispatcher.add_handler(no_twitter_tracking_txt_handler)
+    dispatcher.add_handler(no_twitter_tracking_caption_handler)
 
     updater.start_polling()
