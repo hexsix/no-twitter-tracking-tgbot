@@ -9,7 +9,6 @@ from telegram.ext import CallbackContext, CommandHandler, MessageHandler, Filter
 
 
 TOKEN = os.getenv("TOKEN")
-TOKEN = "5394366887:AAG_5NKQ6HoAb2oPCM3usOmzn-IJlUiEnBU"
 DST = re.compile(r"https:\/\/(?:www\.)?twitter\.com\/(\w){1,15}\/status\/(\d)*")
 
 
@@ -37,7 +36,7 @@ def help(update: Update, context: CallbackContext):
         )
 
 
-def replace(text: str) -> (str|None):
+def replace(text: str):
     match = re.search(r"https:\/\/(?:www\.)?twitter\.com\/(\w){1,15}\/status\/(\d)*\?t=(\w)*&s=(\d){1,2}", text)
     if match:
         src = match.group()
