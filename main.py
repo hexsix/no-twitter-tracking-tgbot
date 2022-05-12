@@ -3,13 +3,12 @@ import logging
 import os
 import re
 
-from telegram import Update
 from telegram.ext import Updater
-from telegram.ext import CallbackContext, CommandHandler, MessageHandler, Filters
+from telegram.ext import CommandHandler, MessageHandler, Filters
 
 
 TOKEN = os.getenv("TOKEN")
-DST = re.compile(r"https:\/\/(?:www\.)?twitter\.com\/(\w){1,15}\/status\/(\d)*")
+PORT = int(os.getenv("PORT", "8443"))
 
 
 logging.basicConfig(
@@ -19,11 +18,11 @@ logging.basicConfig(
 logger = logging.getLogger()
 
 
-def start(update: Update, context: CallbackContext):
+def start(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!")
 
 
-def help(update: Update, context: CallbackContext):
+def help(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text=
             "The only thing I can do\n"
             "is getting rid of twitter tracking code tails\n"
@@ -36,7 +35,7 @@ def help(update: Update, context: CallbackContext):
         )
 
 
-def replace(text: str):
+def replace(text):
     match = re.search(r"https:\/\/(?:www\.)?twitter\.com\/(\w){1,15}\/status\/(\d)*\?t=(\w)*&s=(\d){1,2}", text)
     if match:
         src = match.group()
@@ -46,40 +45,46 @@ def replace(text: str):
         return None
 
 
-def no_twitter_tracking_text(update: Update, context: CallbackContext):
-    logger.info(f"recieve {update.channel_post.text}")
+def no_twitter_tracking_text(update, context):
+    if not update.channel_post:
+        return
     text = replace(update.channel_post.text)
     if not text:
         return
-    logger.info(f"edited {text}")
     context.bot.editMessageText(chat_id=update.channel_post.chat_id,
                                 message_id=update.channel_post.message_id,
                                 text=text)
 
 
-def no_twitter_tracking_caption(update: Update, context: CallbackContext):
-    logger.info(f"recieve {update.channel_post.caption}")
+def no_twitter_tracking_caption(update, context):
+    if not update.channel_post:
+        return
     caption = replace(update.channel_post.caption)
     if not caption:
         return
-    logger.info(f"edited {caption}")
     context.bot.editMessageCaption(chat_id=update.channel_post.chat_id,
                                    message_id=update.channel_post.message_id,
                                    caption=caption)
 
 
-if __name__ == '__main__':
+def error(update, context):
+    logger.warning(f"Update {update} caused error {context.error}")
+
+
+if __name__ == "__main__":
     updater = Updater(token=TOKEN, use_context=True)
     dispatcher = updater.dispatcher
 
-    start_handler = CommandHandler('start', start)
-    help_handler = CommandHandler('help', help)
-    no_twitter_tracking_txt_handler = MessageHandler(Filters.text, no_twitter_tracking_text)
-    no_twitter_tracking_caption_handler = MessageHandler(Filters.caption, no_twitter_tracking_caption)
+    start_handler = CommandHandler("start", start)
+    help_handler = CommandHandler("help", help)
+    no_twitter_tracking_txt_handler = MessageHandler(Filters.text & Filters.update.channel_post, no_twitter_tracking_text)
+    no_twitter_tracking_caption_handler = MessageHandler(Filters.caption & Filters.update.channel_post, no_twitter_tracking_caption)
 
     dispatcher.add_handler(start_handler)
     dispatcher.add_handler(help_handler)
     dispatcher.add_handler(no_twitter_tracking_txt_handler)
     dispatcher.add_handler(no_twitter_tracking_caption_handler)
+
+    dispatcher.add_error_handler(error)
 
     updater.start_polling()
