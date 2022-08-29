@@ -14,11 +14,11 @@ logger = logging.getLogger()
 
 
 def help_text():
-    return '我是机器人，我可以移除twitter跟踪代码\n'
-           'I\'m a bot, I can remove twitter track code\n\n'
-           '邀请我到频道，然后给我编辑权限\n'
-           'Invite me to the channel and give me editing privileges\n\n'
-           'If you find any bugs, please stop using and open an issue on\n'
+    return '我是机器人，我可以移除twitter跟踪代码\n' \
+           'I\'m a bot, I can remove twitter track code\n\n' \
+           '邀请我到频道，然后给我编辑权限\n' \
+           'Invite me to the channel and give me editing privileges\n\n' \
+           'If you find any bugs, please stop using and open an issue on\n' \
            'https://github.com/hexsix/no-twitter-tracking-tgbot'
 
 
