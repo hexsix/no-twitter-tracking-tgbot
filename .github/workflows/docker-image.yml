@@ -31,4 +31,4 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: hexsix/mastodon:latest
+          tags: hexsix/no-twitter-track-telegram-bot:latest
