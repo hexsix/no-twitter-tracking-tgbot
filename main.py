@@ -70,7 +70,7 @@ if __name__ == '__main__':
     assert (bot_token := os.environ.get('TOKEN')), 'Please, set environment ' \
                                                    'var TOKEN with your bot token'
 
-    updater = Updater(token=TOKEN, use_context=True)
+    updater = Updater(token=bot_token, use_context=True)
     dispatcher = updater.dispatcher
 
     start_handler = CommandHandler('start', start)
