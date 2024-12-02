@@ -41,7 +41,13 @@ def replace(text):
         dst = re.search(r"https:\/\/(?:www\.)?twitter\.com\/(\w){1,15}\/status\/(\d)*", src).group()
         return text.replace(src, dst)
     else:
-        return None
+        match = re.search(r"https:\/\/(?:www\.)?twitter\.com\/(\w){1,15}\/status\/(\d)*\S*", text)
+        if match:
+            src = match.group()
+            dst = re.search(r"https:\/\/(?:www\.)?twitter\.com\/(\w){1,15}\/status\/(\d)*", src).group()
+            return text.replace(src, dst)
+        else:
+            return None
 
 
 def no_twitter_tracking_text(update, context):
